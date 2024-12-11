@@ -182,7 +182,20 @@
 
   <script src="https://cdn.socket.io/4.5.4/socket.io.min.js"></script>
   <script>
-    const socket = io('real-time-chat-fsgmg1n6b-dub55s-projects.vercel.app');
+    const socket = io('https://real-time-chat-fsgmg1n6b-dub55s-projects.vercel.app', {
+      transports: ['websocket', 'polling'],
+      reconnectionAttempts: 5,
+      reconnectionDelay: 1000
+    });
+
+    // Debug connection status
+    socket.on('connect', () => {
+      console.log('Connected to server');
+    });
+
+    socket.on('connect_error', (error) => {
+      console.error('Connection error:', error);
+    });
 
     const welcomeScreen = document.getElementById('welcome-screen');
     const chatInterface = document.getElementById('chat-interface');
@@ -197,8 +210,9 @@
         e.preventDefault();
         welcomeScreen.style.display = 'none';
         chatInterface.style.display = 'block';
-        // Add entrance animation to chat interface
         chatInterface.style.animation = 'fadeInUp 0.8s ease forwards';
+        // Notify when user joins
+        socket.emit('user joined', nameInput.value);
       }
     });
 
@@ -243,22 +257,33 @@
         text: text,
         time: timestamp
       };
-      console.log('Sending message:', message);
+      // Add message to UI immediately for sender
+      const li = document.createElement('li');
+      li.innerHTML = `
+        <span class="timestamp">${message.time}</span>
+        <span class="username">${message.name}</span>
+        <span class="message-text">${message.text}</span>
+      `;
+      messages.appendChild(li);
+      scrollToBottom();
+      
       socket.emit('chat message', message);
       messageInput.value = '';
       messageInput.style.height = '40px';
     }
 
     socket.on('chat message', (msg) => {
-      console.log('Received message:', msg);
-      const li = document.createElement('li');
-      li.innerHTML = `
-        <span class="timestamp">${msg.time}</span>
-        <span class="username">${msg.name}</span>
-        <span class="message-text">${msg.text}</span>
-      `;
-      messages.appendChild(li);
-      scrollToBottom();
+      // Only add message to UI if it's from another user
+      if (msg.name !== nameInput.value) {
+        const li = document.createElement('li');
+        li.innerHTML = `
+          <span class="timestamp">${msg.time}</span>
+          <span class="username">${msg.name}</span>
+          <span class="message-text">${msg.text}</span>
+        `;
+        messages.appendChild(li);
+        scrollToBottom();
+      }
     });
 
     socket.on('chat history', (history) => {
