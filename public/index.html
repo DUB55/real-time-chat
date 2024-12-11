@@ -13,9 +13,9 @@
   <form id="chat-form">
     <input id="m" autocomplete="off" /><button>Send</button>
   </form>
-  <script src="/socket.io/socket.io.js"></script>
+  <script src="https://cdn.socket.io/4.5.4/socket.io.min.js"></script>
   <script>
-    const socket = io();
+    const socket = io('https://real-time-chat-eosin-rho.vercel.app');
     const chatForm = document.getElementById('chat-form');
     const nameInput = document.getElementById('name');
     const messageInput = document.getElementById('m');
