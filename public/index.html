@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Simple Chat</title>
+  <style>
+    #messages { list-style-type: none; margin: 0; padding: 0; }
+    #messages li { padding: 5px 10px; }
+  </style>
+</head>
+<body>
+  <input id="name" type="text" placeholder="Enter your name">
+  <ul id="messages"></ul>
+  <form id="chat-form">
+    <input id="m" autocomplete="off" /><button>Send</button>
+  </form>
+  <script src="/socket.io/socket.io.js"></script>
+  <script>
+    const socket = io();
+    const chatForm = document.getElementById('chat-form');
+    const nameInput = document.getElementById('name');
+    const messageInput = document.getElementById('m');
+    const messages = document.getElementById('messages');
+
+    chatForm.addEventListener('submit', (e) => {
+      e.preventDefault();
+      if (messageInput.value && nameInput.value) {
+        socket.emit('chat message', `${nameInput.value}: ${messageInput.value}`);
+        messageInput.value = '';
+      }
+    });
+
+    socket.on('chat message', (msg) => {
+      const li = document.createElement('li');
+      li.textContent = msg;
+      messages.appendChild(li);
+    });
+
+    // Handle chat history
+    socket.on('chat history', (history) => {
+      history.forEach((msg) => {
+        const li = document.createElement('li');
+        li.textContent = msg;
+        messages.appendChild(li);
+      });
+    });
+  </script>
+</body>
+</html>
