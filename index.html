@@ -167,7 +167,7 @@
   <div class="welcome-container" id="welcome-screen">
     <div class="welcome-text">Vul je naam in...</div>
     <div class="name-container">
-      <input type="text" id="name" class="name-input" placeholder="Je naam" autocomplete="off">
+      <input type="text" id="name" class="name-input" placeholder="Naam..." autocomplete="off">
     </div>
   </div>
 
@@ -175,14 +175,14 @@
   <div class="chat-container" id="chat-interface">
     <ul id="messages"></ul>
     <form id="chat-form" class="input-container">
-      <textarea id="m" class="message-input" placeholder="Type een bericht..." rows="1"></textarea>
+      <textarea id="m" class="message-input" placeholder="Bericht..." rows="1"></textarea>
       <button type="submit">Verstuur</button>
     </form>
   </div>
 
   <script src="https://cdn.socket.io/4.5.4/socket.io.min.js"></script>
   <script>
-    const socket = io('https://real-time-chat-fsgmg1n6b-dub55s-projects.vercel.app', {
+    const socket = io('https://real-time-chat-eosin-rho.vercel.app', {
       transports: ['websocket', 'polling'],
       reconnectionAttempts: 5,
       reconnectionDelay: 1000
