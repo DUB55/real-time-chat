@@ -261,13 +261,23 @@
         text: text,
         time: timestamp
       };
+      // Display message immediately
+      const li = document.createElement('li');
+      li.innerHTML = `
+        <span class="timestamp">${timestamp}</span>
+        <span class="username">${nameInput.value}</span>
+        <span class="message-text">${text}</span>
+      `;
+      messages.appendChild(li);
+      scrollToBottom();
+      
       socket.emit('chat message', message);
       messageInput.value = '';
       messageInput.style.height = '40px';
     }
 
     socket.on('chat message', (msg) => {
-      // Only add message to UI if it's from another user
+      // Only add messages from other users (avoid duplicates)
       if (msg.name !== nameInput.value) {
         const li = document.createElement('li');
         li.innerHTML = `
