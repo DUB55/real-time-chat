@@ -182,7 +182,7 @@
 
   <script src="https://cdn.socket.io/4.5.4/socket.io.min.js"></script>
   <script>
-    const socket = io('wss://real-time-chat-fsgmg1n6b-dub55s-projects.vercel.app', {
+    const socket = io('https://real-time-chat-fsgmg1n6b-dub55s-projects.vercel.app', {
       transports: ['websocket', 'polling'],
       reconnectionAttempts: 5,
       reconnectionDelay: 1000
@@ -194,11 +194,6 @@
 
     socket.on('connect_error', (error) => {
       console.error('Connection error:', error);
-      if (!socket.connected) {
-        socket = io('https://real-time-chat-fsgmg1n6b-dub55s-projects.vercel.app', {
-          transports: ['websocket', 'polling']
-        });
-      }
     });
 
     const welcomeScreen = document.getElementById('welcome-screen');
@@ -261,33 +256,20 @@
         text: text,
         time: timestamp
       };
-      // Display message immediately
-      const li = document.createElement('li');
-      li.innerHTML = `
-        <span class="timestamp">${timestamp}</span>
-        <span class="username">${nameInput.value}</span>
-        <span class="message-text">${text}</span>
-      `;
-      messages.appendChild(li);
-      scrollToBottom();
-      
       socket.emit('chat message', message);
       messageInput.value = '';
       messageInput.style.height = '40px';
     }
 
     socket.on('chat message', (msg) => {
-      // Only add messages from other users (avoid duplicates)
-      if (msg.name !== nameInput.value) {
-        const li = document.createElement('li');
-        li.innerHTML = `
-          <span class="timestamp">${msg.time}</span>
-          <span class="username">${msg.name}</span>
-          <span class="message-text">${msg.text}</span>
-        `;
-        messages.appendChild(li);
-        scrollToBottom();
-      }
+      const li = document.createElement('li');
+      li.innerHTML = `
+        <span class="timestamp">${msg.time}</span>
+        <span class="username">${msg.name}</span>
+        <span class="message-text">${msg.text}</span>
+      `;
+      messages.appendChild(li);
+      scrollToBottom();
     });
 
     socket.on('chat history', (history) => {
