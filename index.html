@@ -172,7 +172,7 @@
   </div>
 
   <!-- Chat Interface -->
-  <div class="chat-container" id="chat-interface">
+  <div class="chat-container" id="chat-interface" style="display: none;">
     <ul id="messages"></ul>
     <form id="chat-form" class="input-container">
       <textarea id="m" class="message-input" placeholder="Bericht..." rows="1"></textarea>
@@ -188,14 +188,6 @@
       reconnectionDelay: 1000
     });
 
-    socket.on('connect', () => {
-      console.log('Connected to server');
-    });
-
-    socket.on('connect_error', (error) => {
-      console.error('Connection error:', error);
-    });
-
     const welcomeScreen = document.getElementById('welcome-screen');
     const chatInterface = document.getElementById('chat-interface');
     const nameInput = document.getElementById('name');
@@ -209,7 +201,6 @@
         e.preventDefault();
         welcomeScreen.style.display = 'none';
         chatInterface.style.display = 'block';
-        chatInterface.style.animation = 'fadeInUp 0.8s ease forwards';
         // Notify when user joins
         socket.emit('user joined', nameInput.value);
       }
@@ -219,47 +210,22 @@
       messages.scrollTop = messages.scrollHeight;
     }
 
-    // Auto-resize textarea
-    messageInput.addEventListener('input', function() {
-      // Reset height to auto only if content exceeds fixed height
-      if (this.scrollHeight > 40) {
-        this.style.height = 'auto';
-        this.style.height = Math.min(this.scrollHeight, 100) + 'px';
-      } else {
-        this.style.height = '40px';
-      }
-    });
-
     // Handle message submission
-    messageInput.addEventListener('keydown', function(e) {
-      if (e.key === 'Enter' && !e.shiftKey) {
-        e.preventDefault();
-        const messageText = this.value.trim();
-        if (messageText) {
-          sendMessage(messageText);
-        }
-      }
-    });
-
     chatForm.addEventListener('submit', function(e) {
       e.preventDefault();
       const messageText = messageInput.value.trim();
       if (messageText) {
-        sendMessage(messageText);
+        const timestamp = new Date().toLocaleTimeString();
+        const message = {
+          name: nameInput.value,
+          text: messageText,
+          time: timestamp
+        };
+        socket.emit('chat message', message);
+        messageInput.value = '';
+        messageInput.style.height = '40px';
       }
     });
-
-    function sendMessage(text) {
-      const timestamp = new Date().toLocaleTimeString();
-      const message = {
-        name: nameInput.value,
-        text: text,
-        time: timestamp
-      };
-      socket.emit('chat message', message);
-      messageInput.value = '';
-      messageInput.style.height = '40px';
-    }
 
     socket.on('chat message', (msg) => {
       const li = document.createElement('li');
