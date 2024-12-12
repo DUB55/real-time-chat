@@ -1,29 +1,29 @@
-// api/server.js
+// api/socket.js
 import { Server } from "socket.io";
 
-const ioHandler = (req, res) => {
+export default function handler(req, res) {
+  // Create the Socket.IO server
   if (res.socket.server.io) {
-    console.log("Socket.io already initialized");
+    console.log("Socket.io already initialized.");
   } else {
     const io = new Server(res.socket.server);
-    res.socket.server.io = io;
 
     io.on("connection", (socket) => {
       console.log("A user connected");
 
-      // Listen for incoming chat messages
+      // Listen for chat messages
       socket.on("chat message", (msg) => {
-        console.log("Received message: ", msg);
-        // Emit the message to all connected clients
         io.emit("chat message", msg);
       });
 
+      // Log when a user disconnects
       socket.on("disconnect", () => {
         console.log("A user disconnected");
       });
     });
-  }
-  res.end();
-};
 
-export default ioHandler;
+    res.socket.server.io = io; // Store the io instance on the server
+  }
+
+  res.end(); // End the response
+}
