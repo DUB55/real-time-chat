@@ -1,6 +1,7 @@
 // public/script.js
-const socket = io();  // Initialize the Socket.IO client
+const socket = io(); // This will use the current domain (Vercel or localhost)
 
+// Initialize UI elements
 const startChatBtn = document.getElementById('start-chat');
 const nameInput = document.getElementById('name-input');
 const chatContainer = document.getElementById('chat-container');
@@ -8,11 +9,11 @@ const messages = document.getElementById('messages');
 const messageInput = document.getElementById('message-input');
 const sendButton = document.getElementById('send-button');
 
-let username = '';  // Variable to store the username
+let username = '';
 
 // Event listener to start the chat when the user enters their name
 startChatBtn.addEventListener('click', () => {
-  username = nameInput.value.trim();  // Get the entered username
+  username = nameInput.value.trim();
   if (username) {
     document.querySelector('.welcome-container').style.display = 'none';
     chatContainer.style.display = 'block';
@@ -32,13 +33,13 @@ messageInput.addEventListener('keypress', (e) => {
   }
 });
 
-// Function to send a message
+// Function to send the message
 function sendMessage() {
   const message = messageInput.value.trim();
   if (message) {
     // Emit the message to the server
     socket.emit('chat message', { username, text: message });
-    messageInput.value = '';  // Clear the input field
+    messageInput.value = ''; // Clear the input field
   }
 }
 
@@ -50,6 +51,6 @@ socket.on('chat message', (msg) => {
     <span class="username">${msg.username}:</span>
     <span class="message-text">${msg.text}</span>
   `;
-  messages.appendChild(item);  // Add the message to the list
-  messages.scrollTop = messages.scrollHeight;  // Scroll to the latest message
+  messages.appendChild(item); // Add the message to the list
+  messages.scrollTop = messages.scrollHeight; // Scroll to the latest message
 });
