@@ -1,3 +1,4 @@
+/* style.css */
 body {
   margin: 0;
   height: 100vh;
@@ -90,21 +91,9 @@ body {
   word-wrap: break-word;
 }
 
-.timestamp {
-  color: #aaa;
-  font-size: 0.8rem;
-  margin-right: 0.5rem;
-}
-
-.username {
-  color: #4488ff;
-  font-weight: 500;
-  margin-right: 0.5rem;
-}
-
-.message-text {
-  color: #fff;
-}
+.timestamp { color: #aaa; font-size: 0.8rem; margin-right: 0.5rem; }
+.username { color: #4488ff; font-weight: 500; margin-right: 0.5rem; }
+.message-text { color: #fff; }
 
 .input-container {
   display: flex;
