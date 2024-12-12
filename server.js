@@ -4,34 +4,33 @@ const http = require('http').createServer(app);
 const { Server } = require("socket.io");
 const io = new Server(http, {
   cors: {
-    origin: "https://real-time-chat-eosin-rho.vercel.app",
+    origin: "https://real-time-chat-eosin-rho.vercel.app/",
     methods: ["GET", "POST"]
   }
 });
 
 app.use(express.static('public'));
 
-const { MongoClient } = require('mongodb');
-const mongoUrl = process.env.MONGODB_URI; // Your MongoDB connection string
-const client = new MongoClient(mongoUrl);
-let chatCollection;
+// Store chat messages with timestamps in memory
+let chatHistory = [];
 
-async function connectDB() {
-  await client.connect();
-  const db = client.db('chatapp');
-  chatCollection = db.collection('messages');
-}
-
-io.on('connection', async (socket) => {
+io.on('connection', (socket) => {
   console.log('User connected:', socket.id);
 
   // Send chat history to new users
-  const chatHistory = await chatCollection.find({}).sort({ timestamp: -1 }).limit(50).toArray();
   socket.emit('chat history', chatHistory);
 
-  socket.on('chat message', async (msg) => {
+  socket.on('chat message', (msg) => {
     console.log('Message received:', msg);
-    await chatCollection.insertOne({ ...msg, timestamp: new Date() });
+    // Store the message with timestamp
+    chatHistory.push(msg);
+    
+    // Limit history to last 50 messages
+    if (chatHistory.length > 50) {
+      chatHistory = chatHistory.slice(-50);
+    }
+    
+    // Broadcast the message to all connected clients
     io.emit('chat message', msg);
   });
 
@@ -44,8 +43,5 @@ const port = process.env.PORT || 3000;
 http.listen(port, () => {
   console.log(`Server running on port ${port}`);
 });
-
-// Call connectDB before starting the server
-connectDB().catch(console.error);
 
 module.exports = app;
