@@ -1,56 +1,32 @@
-// public/script.js
-const socket = io(); // This will use the current domain (Vercel or localhost)
+// Connect to the Socket.IO server
+const socket = io();
 
-// Initialize UI elements
-const startChatBtn = document.getElementById('start-chat');
-const nameInput = document.getElementById('name-input');
-const chatContainer = document.getElementById('chat-container');
-const messages = document.getElementById('messages');
-const messageInput = document.getElementById('message-input');
-const sendButton = document.getElementById('send-button');
+// DOM elements
+const messagesList = document.getElementById("messages");
+const sendMessageBtn = document.getElementById("sendMessageBtn");
+const messageInput = document.getElementById("messageInput");
+const nameInput = document.getElementById("nameInput");
 
-let username = '';
-
-// Event listener to start the chat when the user enters their name
-startChatBtn.addEventListener('click', () => {
-  username = nameInput.value.trim();
-  if (username) {
-    document.querySelector('.welcome-container').style.display = 'none';
-    chatContainer.style.display = 'block';
-  }
-});
-
-// Event listener to send the message when the button is clicked
-sendButton.addEventListener('click', () => {
-  sendMessage();
-});
-
-// Event listener to send the message when Enter key is pressed
-messageInput.addEventListener('keypress', (e) => {
-  if (e.key === 'Enter' && !e.shiftKey) {
-    e.preventDefault();
-    sendMessage();
-  }
-});
-
-// Function to send the message
-function sendMessage() {
-  const message = messageInput.value.trim();
-  if (message) {
-    // Emit the message to the server
-    socket.emit('chat message', { username, text: message });
-    messageInput.value = ''; // Clear the input field
-  }
+// Function to append messages to the chat
+function appendMessage(username, message) {
+  const li = document.createElement("li");
+  li.innerHTML = `<span class="username">${username}:</span> <span class="message-text">${message}</span>`;
+  messagesList.appendChild(li);
+  messagesList.scrollTop = messagesList.scrollHeight; // Scroll to the bottom
 }
 
-// Listen for incoming chat messages from the server
-socket.on('chat message', (msg) => {
-  const item = document.createElement('li');
-  item.innerHTML = `
-    <span class="timestamp">${new Date().toLocaleTimeString()}</span>
-    <span class="username">${msg.username}:</span>
-    <span class="message-text">${msg.text}</span>
-  `;
-  messages.appendChild(item); // Add the message to the list
-  messages.scrollTop = messages.scrollHeight; // Scroll to the latest message
+// Send message when the button is clicked
+sendMessageBtn.addEventListener("click", () => {
+  const message = messageInput.value.trim();
+  const username = nameInput.value.trim() || "Anonymous";
+
+  if (message) {
+    socket.emit("chat message", { username, message }); // Emit message to the server
+    messageInput.value = ""; // Clear input field
+  }
+});
+
+// Listen for new messages from the server
+socket.on("chat message", (msg) => {
+  appendMessage(msg.username, msg.message);
 });
