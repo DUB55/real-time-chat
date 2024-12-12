@@ -1,5 +1,19 @@
 {
-  "rewrites": [
-    { "source": "/socket.io/:path*", "destination": "/api/server" }
+  "version": 2,
+  "builds": [
+    {
+      "src": "public/**/*",
+      "use": "@vercel/static"
+    },
+    {
+      "src": "api/socket.js",
+      "use": "@vercel/node"
+    }
+  ],
+  "routes": [
+    {
+      "src": "/socket.io/(.*)",
+      "dest": "/api/socket.js"
+    }
   ]
 }
