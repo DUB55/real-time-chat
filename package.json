@@ -1,0 +1,11 @@
+{
+  "name": "real-time-chat",
+  "version": "1.0.0",
+  "main": "api/server.js",
+  "scripts": {
+    "start": "vercel dev"
+  },
+  "dependencies": {
+    "socket.io": "^4.6.1"
+  }
+}
