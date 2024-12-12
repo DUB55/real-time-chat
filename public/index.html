@@ -3,26 +3,27 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Real-Time Chat</title>
-  <link rel="stylesheet" href="style.css">
-  <script defer src="/socket.io/socket.io.js"></script>
-  <script defer src="script.js"></script>
+  <title>Real-time Chat</title>
+  <link rel="stylesheet" href="/style.css">
 </head>
 <body>
   <div class="welcome-container">
-    <div class="welcome-text">Welcome to the Chat</div>
+    <div class="welcome-text">Welcome to the Real-Time Chat App!</div>
     <div class="name-container">
-      <input id="name-input" class="name-input" type="text" placeholder="Enter your name" />
-      <button id="start-chat">Start Chat</button>
+      <input type="text" id="name-input" class="name-input" placeholder="Enter your name" />
+      <button id="start-chat" class="start-chat-btn">Start Chat</button>
     </div>
   </div>
 
-  <div class="chat-container" id="chat-container">
+  <div id="chat-container" class="chat-container">
     <ul id="messages"></ul>
     <div class="input-container">
       <textarea id="message-input" class="message-input" placeholder="Type a message..."></textarea>
-      <button id="send-button">Send</button>
+      <button id="send-button" class="send-btn">Send</button>
     </div>
   </div>
+
+  <script src="/socket.io/socket.io.js"></script>
+  <script src="/script.js"></script>
 </body>
 </html>
