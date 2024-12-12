@@ -1,3 +1,4 @@
+// public/script.js
 const socket = io();
 
 const startChatBtn = document.getElementById('start-chat');
@@ -31,16 +32,18 @@ messageInput.addEventListener('keypress', (e) => {
 function sendMessage() {
   const message = messageInput.value.trim();
   if (message) {
+    // Emit the message to the server
     socket.emit('chat message', { username, text: message });
-    messageInput.value = '';
+    messageInput.value = ''; // Clear the input field
   }
 }
 
-socket.on('chat message', ({ username, text }) => {
+// Listen for incoming chat messages
+socket.on('chat message', (msg) => {
   const item = document.createElement('li');
   item.innerHTML = `<span class="timestamp">${new Date().toLocaleTimeString()}</span>
-                    <span class="username">${username}:</span>
-                    <span class="message-text">${text}</span>`;
+                    <span class="username">${msg.username}:</span>
+                    <span class="message-text">${msg.text}</span>`;
   messages.appendChild(item);
-  messages.scrollTop = messages.scrollHeight;
+  messages.scrollTop = messages.scrollHeight; // Scroll to the latest message
 });
